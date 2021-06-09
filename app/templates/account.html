@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Добро пожаловать: {{ user.user_name }}</h1> <hr>
+    {% for message in messages %}
+    <p>{{ message.author.user_name }} сказал: <b>{{ message.body }}</b></p>
+    {% endfor %}
+{% endblock %}
