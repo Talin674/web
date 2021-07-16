@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block app_content %}
     {% for post in posts %}
     <p>{{ post.author.user_name }} сказал: <b>{{ post.body }}</b></p>
     {% endfor %}
