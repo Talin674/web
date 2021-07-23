@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-4">
+    <div class="alert alert-info" role="alert">
+      Зарегистрируйтесь, чтобы получить доступ к профилю
+    </div>
+    <h1>Регистрация</h1>
+    {{ wtf.quick_form(form) }}
+    <p>
+      <form action="{{ url_for('login') }}">
+        Есть аккаунт?<button type="submit" class="btn btn-primary">Кликни чтобы войти!</button>
+      </form>
+    </p>
+    <div class="clearfix"></div>
+  </div>
+  <div class="col-md-4"></div>
+</div>
+{% endblock %}

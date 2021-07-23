@@ -8,8 +8,13 @@
         <td>
             <a href="{{ url_for('user', username=post.author.username) }}">
             {{ post.author.username }}
+            {% if online %}
+                <img src="https://nagelschick.de/wp-content/uploads/2019/05/Green-apple-1.jpg" width="12">
+            {% else %}
+                <img src="https://im0-tub-ru.yandex.net/i?id=fd1e0a5d931e2624b39f638f798f2d05&n=13&exp=1" width="12">
+            {% endif %}
             </a>
-            сказал:<br>{{ post.body }}
+            сказал {{ moment(post.timestamp).fromNow() }}:<br>{{ post.body }}
         </td>
     </tr>
 </table>
