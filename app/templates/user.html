@@ -5,19 +5,22 @@
         <tr valign="top">
             <td><img src="{{ user.avatar(128) }}"></td>
             <td>
-                <h1>User: {{ user.username }}</h1>
-                {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-                {% if online %}<p>Онлайн</p>
+                <h1>&nbsp;{{ user.username }}</h1>
+                {% if user.about_me %}<p>{{ _('%(said)s', said=user.about_me) }}</p>{% endif %}
+                {% if user.usr_active %}<p>Онлайн</p>
                 {% else %}
-                {% if user.last_seen %}<p>Был в сети: {{ moment(user.last_seen).fromNow() }}</p>{% endif %}
+                <p>{{ _('Был в сети') }}: {{ moment(user.last_seen).fromNow() }}</p>
                 {% endif %}
-                <p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</p>
+                <p>{{ _('%(count)d followers', count=user.followers.count()) }}, {{ _('%(count)d following', count=user.followed.count()) }}</p>
+                                {% if user == current_user %}
+                <p><a href="{{ url_for('main.edit_profile') }}">{{ _('Edit your profile') }}</a></p>
+                {% elif not current_user.is_following(user) %}
                 {% if not current_user.is_following(user) %}
-                <p><a href="{{ url_for('follow', username=user.username) }}">Подписаться</a></p>
+                <p><a href="{{ url_for('main.follow', username=user.username) }}">{{ _('Подписаться') }}</a></p>
                 {% else %}
-                <p><a href="{{ url_for('unfollow', username=user.username) }}">Отписаться</a></p>
+                <p><a href="{{ url_for('main.unfollow', username=user.username) }}">{{ _('Отписаться') }}</a></p>
                 {% endif %}
-
+                {% endif %}
             </td>
         </tr>
     </table>
@@ -29,15 +32,14 @@
     <ul class="pager">
         <li class="previous{% if not prev_url %} disabled{% endif %}">
             <a href="{{ prev_url or '#' }}">
-                <span aria-hidden="true">&larr;</span> Предыдущая страничка
+                <span aria-hidden="true">&larr;</span> {{ _('Предыдущая страничка') }}
             </a>
         </li>
         <li class="next{% if not next_url %} disabled{% endif %}">
             <a href="{{ next_url or '#' }}">
-                Следующая страничка<span aria-hidden="true">&rarr;</span>
+                {{ _('Следующая страничка') }}<span aria-hidden="true">&rarr;</span>
             </a>
         </li>
     </ul>
 </nav>
-
 {% endblock %}

@@ -10,39 +10,44 @@
 
 {% endblock %}
 
-
-
 {% block navbar %}
-
-      <nav class="navbar navbar-inverse">
+      <nav class="navbar navbar-expand-lg navbar navbar-inverse">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{{ url_for('index') }}">Главная</a>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">{{ _('Главная') }}</a>
             </div>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <li class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('index') }}">Домой</a></li>
-                    <li><a href="{{ url_for('explore') }}">Обзор</a></li>
-                    <li><a class="nav-link" href="{{ url_for('posts') }}">Посты</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}">{{ _('Домой') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.explore') }}">{{ _('Обзор') }}</a></li>
                 </ul>
+               {% if g.search_form %}
+                <form class="navbar-form navbar-left" method="get"
+                        action="{{ url_for('main.search') }}">
+                    <div class="form-group">
+                        {{ g.search_form.q(size=20, class='form-control', placeholder=g.search_form.q.label.text) }}
+                    </div>
+                </form>
+                {% endif %}
                 <ul class="nav navbar-nav navbar-right">
-                    {% if current_user.is_anonymous %}
-                    <li><a href="{{ url_for('login') }}">Логин</a></li>
-                    {% else %}
-                    <li><a href="{{ url_for('user', username=current_user.username) }}">Профиль</a></li>
-                    <li class="nav-item">
-                        {% if user == current_user %}
-                            <a class="nav-link" href="{{ url_for('edit_profile') }}">Изменить профиль</a>
-                        {% endif %}
-                      </li>
-                    <li><a href="{{ url_for('logout') }}">Выйти</a></li>
-                    {% endif %}
+                    <li class="btn-group">
+                        <a class="btn dropdown-toggle" data-toggle="dropdown">{{ _('Аккаунт') }}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                            {% if current_user.is_anonymous %}
+                                <li><a href="{{ url_for('auth.login') }}">{{ _('Логин') }}</a></li>
+                            {% else %}
+                                <li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Профиль') }}</a></li>
+                                <li>
+                                {% if user == current_user %}
+                                <a class="nav-link" href="{{ url_for('main.edit_profile') }}">{{ _('Изменить профиль') }}</a>
+                                </li>
+                            {% endif %}
+                                <li><a href="{{ url_for('auth.logout') }}">{{ _('Выйти') }}</a></li>
+                                {% endif %}
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -50,18 +55,36 @@
 
 {% endblock %}
 
-{% block scripts %}
-
-{{ super() }}
-{{ moment.include_moment() }}
-{{ moment.lang('ru') }}
-{% endblock %}
 
 {% block content %}
 
     <div class="container">
         {% block app_content %}
         {% endblock %}
+        {% block script %}
+        {% endblock %}
     </div>
 
+{% endblock %}
+
+
+{% block scripts %}
+
+{{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang(g.locale) }}
+<script>
+    function translate(sourceElem, destElem, sourceLang, destLang) {
+        $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+        $.post('/translate', {
+            text: $(sourceElem).text(),
+            source_language: sourceLang,
+            dest_language: destLang
+        }).done(function(response)) {
+            $(destElem).text(response['text'])
+        }).fail(function()) {
+            $(destElem).text("{{ _('Ошибка: сбой службы перевода') }}");
+        });
+    }
+</script>
 {% endblock %}
